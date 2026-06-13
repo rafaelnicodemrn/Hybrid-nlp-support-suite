@@ -1,0 +1,22 @@
+# --- Framework Web e Servidor ---
+fastapi==0.104.1
+uvicorn==0.24.0.post1
+
+# --- Machine Learning e NLP (Triagem Local) ---
+transformers==4.35.2
+torch==2.1.2
+pysentimiento==0.7.3
+numpy<2.0.0
+tf-keras
+
+# --- Validação de Dados ---
+pydantic==2.5.2
+
+# --- Variáveis de Ambiente ---
+python-dotenv==1.0.0
+
+# --- SDK Oficial do Google Gemini (Geração de Texto) ---
+google-genai
+
+# --- Banco de Dados ORM ---
+sqlalchemy==2.0.23

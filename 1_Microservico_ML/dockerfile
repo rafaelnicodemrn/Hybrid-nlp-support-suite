@@ -1,0 +1,43 @@
+# Usa uma imagem oficial do Python, versão enxuta (slim) para economizar espaço
+FROM python:3.11-slim
+
+# Instala o curl para o healthcheck e outras ferramentas essenciais
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configura variáveis de ambiente do Python e força o cache do Hugging Face (IA) para uma pasta específica
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    HF_HOME=/app/cache \
+    TRANSFORMERS_CACHE=/app/cache
+
+# Define a pasta de trabalho principal dentro do contêiner
+WORKDIR /app
+
+# Cria um usuário sem privilégios de root por questões de segurança (Boas práticas de DevOps)
+RUN addgroup --system appgroup && adduser --system --group appuser
+
+# Cria a pasta de cache do modelo explicitamente
+RUN mkdir -p /app/cache
+
+# Copia o arquivo de dependências e instala tudo (sem guardar cache do pip para manter a imagem leve)
+COPY requirements.txt .
+RUN pip install --default-timeout=1000 --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+
+# Copia o script de download e baixa o modelo ANTES de copiar o código fonte
+COPY download_model.py .
+RUN python download_model.py
+
+# Copia todos os arquivos Python e configurações necessárias
+COPY . .
+
+# Transfere a propriedade dos arquivos para o usuário seguro que criamos
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+# Expõe a porta 8000 para que nosso computador possa acessar o contêiner
+EXPOSE 8000
+
+# Comando final que inicia o servidor Uvicorn rodando o FastAPI
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

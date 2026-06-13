@@ -1,0 +1,21 @@
+# ==========================================
+# Orquestrador de Contêineres Docker
+# ==========================================
+services:
+  nlp-api:
+    # Constrói a imagem baseada no Dockerfile da pasta atual
+    build: .
+    # Mapeia a porta 8000 do host (nosso PC) para a 8000 do contêiner
+    ports:
+      - "8000:8000"
+    # Carrega a chave de API de forma segura
+    env_file:
+      - .env
+    # Nome fixo do contêiner para facilitar comandos de start/stop
+    container_name: nlp-container
+    # Monitoramento contínuo de saúde da API (Graceful Degradation / Observabilidade)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
