@@ -3,8 +3,8 @@ fastapi==0.104.1
 uvicorn==0.24.0.post1
 
 # --- Machine Learning e NLP (Triagem Local) ---
-transformers==4.35.2
-torch==2.1.2
+transformers==5.23.0
+torch==2.15.0
 pysentimiento==0.7.3
 numpy<2.0.0
 tf-keras
@@ -13,7 +13,7 @@ tf-keras
 pydantic==2.5.2
 
 # --- Variáveis de Ambiente ---
-python-dotenv==1.0.0
+python-dotenv==1.2.4
 
 # --- SDK Oficial do Google Gemini (Geração de Texto) ---
 google-genai
